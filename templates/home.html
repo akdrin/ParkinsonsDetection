@@ -1,274 +1,192 @@
-<!DOCTYPE html>
-<html lang="en">
+ <!doctype html>
+<html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Parkinson's Detection | Advanced Voice Analysis</title>
-  <!-- Tailwind CSS + Base styling -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Custom CSS for refined dark mode, inputs, and professional accents -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
-    /* global dark mode custom overrides & professional touches */
-    body {
-      background-color: #0B1120;
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
-    }
-
-    /* smooth scroll & focus ring consistency */
-    *:focus-visible {
-      outline: 2px solid #34d399;
-      outline-offset: 2px;
-      border-radius: 0.25rem;
-    }
-
-    /* custom input glow & transition (dark-first) */
-    input, button {
-      transition: all 0.2s ease;
-    }
-
-    input {
-      background-color: #1e293b !important;
-      border: 1px solid #334155 !important;
-      color: #f1f5f9 !important;
-      border-radius: 0.75rem;
-      padding: 0.6rem 1rem;
-    }
-
-    input:focus {
-      border-color: #34d399 !important;
-      box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.2) !important;
-      background-color: #0f172a !important;
-    }
-
-    /* replace generic placeholder styles */
-    input::placeholder {
-      color: #64748b;
-      font-weight: 400;
-    }
-
-    /* labels spacing and modern look */
-    label {
-      font-weight: 500;
-      letter-spacing: -0.01em;
-    }
-
-    /* card / result container consistent improvement */
-    .result-card {
-      backdrop-filter: blur(4px);
-    }
-
-    /* custom scrollbar for a professional feel */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 6px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: #111827;
-      border-radius: 10px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: #34d399;
-      border-radius: 10px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: #2ba16b;
-    }
-
-    /* subtle gradient for brand text */
-    .brand-gradient {
-      background: linear-gradient(135deg, #34d399 0%, #a7f3d0 100%);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
+    span{
+      color: red;
     }
   </style>
 </head>
-<body class="bg-gray-950 antialiased">
-
-  <!-- main container -->
-  <div class="bg-gray-900 pb-6 sm:pb-8 lg:pb-12 shadow-sm">
-    <div class="mx-auto max-w-screen-2xl px-4 md:px-8">
-      <!-- header section with refined dark palette -->
-      <header class="mb-4 flex items-center justify-between py-4 md:py-8 border-b border-gray-800/60">
-        <!-- logo + brand: modern dark mode ready -->
-        <a href="/" class="inline-flex items-center gap-2.5 text-2xl font-bold md:text-3xl" aria-label="Parkinson's Detection">
-          <svg width="95" height="94" viewBox="0 0 95 94" class="h-auto w-7 text-emerald-400 drop-shadow-sm" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path d="M96 0V47L48 94H0V47L48 0H96Z" />
-          </svg>
-          <span class="bg-gradient-to-r from-emerald-300 to-teal-300 bg-clip-text text-transparent">Parkinson's Detection</span>
-        </a>
-        <!-- desktop navigation - professional dark mode links -->
-        <nav class="hidden gap-10 lg:flex">
-          <a href="#" class="text-base font-semibold text-emerald-400 border-b-2 border-emerald-400/40 pb-1 transition-all hover:text-emerald-300">Home</a>
-          <a href="#" class="text-base font-semibold text-gray-300 transition duration-150 hover:text-emerald-400">About</a>
-          <a href="#" class="text-base font-semibold text-gray-300 transition duration-150 hover:text-emerald-400">Features</a>
-        </nav>
-
-        <!-- mobile menu button (kept functional, restyled dark) -->
-        <button type="button" class="inline-flex items-center gap-2 rounded-xl bg-gray-800 px-3 py-2 text-sm font-semibold text-gray-200 ring-emerald-400/50 hover:bg-gray-700 focus-visible:ring lg:hidden transition">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-          Menu
-        </button>
-      </header>
-    </div>
-  </div>
-
-  <!-- main content: professional dark card with form & result -->
-  <div class="bg-gray-900 py-6 sm:py-8 lg:py-12">
-    <div class="mx-auto max-w-screen-2xl px-4 md:px-8">
-      <!-- central form card - elevated & refined -->
-      <div class="rounded-2xl bg-gray-800/90 shadow-2xl backdrop-blur-sm border border-gray-700/60 p-6 md:p-8 transition-all">
-        <!-- heading -->
-        <div class="mb-8 md:mb-12 text-center">
-          <h3 class="text-2xl font-bold tracking-tight text-white md:text-3xl lg:text-4xl bg-gradient-to-r from-gray-100 to-gray-300 bg-clip-text text-transparent">Clinical Voice Analysis</h3>
-          <p class="mt-3 text-gray-400 max-w-2xl mx-auto text-base">Enter biomedical voice measurements to predict Parkinson's disease status with high-precision model.</p>
-        </div>
-
-        <!-- dynamic result display (modern styling dark adapted) -->
-        <div class="mx-auto max-w-screen-md px-2 md:px-4 mb-8">
-          {% if result == 'Person Has No Pakinson Disease' %}
-          <div class="flex items-center justify-center gap-3 rounded-xl bg-emerald-900/50 border border-emerald-500/40 py-4 px-5 shadow-md backdrop-blur-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 text-emerald-300">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <p class="text-2xl font-semibold text-emerald-200">{{result}}</p>
-          </div>
-          {% elif result %}
-          <div class="flex items-center justify-center rounded-xl bg-rose-900/40 border border-rose-500/40 py-4 px-5 shadow-md">
-            <p class="text-2xl font-semibold text-rose-200">{{result}}</p>
-          </div>
-          {% endif %}
-        </div>
-
-        <!-- advanced form (grid layout)  -->
-        <form class="mx-auto grid max-w-screen-xl gap-5 sm:grid-cols-2 lg:grid-cols-3" action="{{ url_for('predict_datapoint') }}" method="POST">
-          <!-- input fields listed with modern design, all dark mode optimized -->
-          <div>
-            <label for="MDVP_Fo_Hz" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">MDVP:Fo (Hz) <span class="text-rose-400">*</span></label>
-            <input name="MDVP_Fo_Hz" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="e.g. 119.992" />
-          </div>
-          <div>
-            <label for="MDVP_Fhi_Hz" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">MDVP:Fhi (Hz) <span class="text-rose-400">*</span></label>
-            <input name="MDVP_Fhi_Hz" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="e.g. 157.302" />
-          </div>
-          <div>
-            <label for="MDVP_Flo_Hz" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">MDVP:Flo (Hz) <span class="text-rose-400">*</span></label>
-            <input name="MDVP_Flo_Hz" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="e.g. 74.997" />
-          </div>
-          <div>
-            <label for="MDVP_Jitter_percent" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">Jitter(%) <span class="text-rose-400">*</span></label>
-            <input name="MDVP_Jitter_percent" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="0.00284" />
-          </div>
-          <div>
-            <label for="MDVP_Jitter_Abs" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">Jitter(Abs) <span class="text-rose-400">*</span></label>
-            <input name="MDVP_Jitter_Abs" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="0.000011" />
-          </div>
-          <div>
-            <label for="MDVP_RAP" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">MDVP:RAP <span class="text-rose-400">*</span></label>
-            <input name="MDVP_RAP" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="0.00166" />
-          </div>
-          <div>
-            <label for="MDVP_PPQ" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">MDVP:PPQ <span class="text-rose-400">*</span></label>
-            <input name="MDVP_PPQ" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="0.00219" />
-          </div>
-          <div>
-            <label for="Jitter_DDP" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">Jitter:DDP <span class="text-rose-400">*</span></label>
-            <input name="Jitter_DDP" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="0.00499" />
-          </div>
-          <div>
-            <label for="MDVP_Shimmer" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">MDVP:Shimmer <span class="text-rose-400">*</span></label>
-            <input name="MDVP_Shimmer" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="0.00996" />
-          </div>
-          <div>
-            <label for="MDVP_Shimmer_dB" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">Shimmer(dB) <span class="text-rose-400">*</span></label>
-            <input name="MDVP_Shimmer_dB" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="0.0854" />
-          </div>
-          <div>
-            <label for="Shimmer_APQ3" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">Shimmer:APQ3 <span class="text-rose-400">*</span></label>
-            <input name="Shimmer_APQ3" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="0.00496" />
-          </div>
-          <div>
-            <label for="Shimmer_APQ5" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">Shimmer:APQ5 <span class="text-rose-400">*</span></label>
-            <input name="Shimmer_APQ5" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="0.00644" />
-          </div>
-          <div>
-            <label for="MDVP_APQ" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">MDVP:APQ <span class="text-rose-400">*</span></label>
-            <input name="MDVP_APQ" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="0.00744" />
-          </div>
-          <div>
-            <label for="Shimmer_DDA" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">Shimmer:DDA <span class="text-rose-400">*</span></label>
-            <input name="Shimmer_DDA" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="0.01489" />
-          </div>
-          <div>
-            <label for="NHR" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">NHR <span class="text-rose-400">*</span></label>
-            <input name="NHR" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="0.00379" />
-          </div>
-          <div>
-            <label for="HNR" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">HNR <span class="text-rose-400">*</span></label>
-            <input name="HNR" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="21.033" />
-          </div>
-          <div>
-            <label for="RPDE" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">RPDE <span class="text-rose-400">*</span></label>
-            <input name="RPDE" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="0.414" />
-          </div>
-          <div>
-            <label for="DFA" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">DFA <span class="text-rose-400">*</span></label>
-            <input name="DFA" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="0.683" />
-          </div>
-          <div>
-            <label for="spread1" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">Spread1 <span class="text-rose-400">*</span></label>
-            <input name="spread1" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="-4.073" />
-          </div>
-          <div>
-            <label for="spread2" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">Spread2 <span class="text-rose-400">*</span></label>
-            <input name="spread2" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="0.212" />
-          </div>
-          <div>
-            <label for="D2" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">D2 <span class="text-rose-400">*</span></label>
-            <input name="D2" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="2.275" />
-          </div>
-          <div>
-            <label for="PPE" class="mb-2 inline-block text-sm font-medium text-gray-200 sm:text-base">PPE <span class="text-rose-400">*</span></label>
-            <input name="PPE" class="w-full rounded-xl border-gray-600 bg-gray-700 px-3 py-2.5 text-white outline-none ring-emerald-400/50 transition focus:ring-2" type="text" placeholder="0.209" />
-          </div>
-
-          <!-- submit button centered and polished -->
-          <div class="flex justify-center sm:col-span-2 lg:col-span-3 pt-6">
-            <button type="submit" class="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-12 py-3.5 text-base font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-emerald-500/30 focus:ring-2 focus:ring-emerald-400 md:text-lg">
-              <svg class="w-5 h-5 transition-transform group-hover:rotate-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-              Analyze & Predict
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <!-- FOOTER section: cleaned, brand copyright with Aman & Aaditya, no social logos -->
-      <div class="mt-12 rounded-2xl bg-gray-800/40 border border-gray-800/60 pt-8 sm:pt-10">
-        <footer class="mx-auto max-w-screen-2xl px-4 md:px-8">
-          <div class="flex flex-col items-center border-t border-gray-700/60 pt-6">
-            <!-- simplified footer navigation -->
-            <nav class="mb-6 flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm font-medium">
-              <a href="#" class="text-gray-300 transition duration-150 hover:text-emerald-400">Home</a>
-              <a href="#" class="text-gray-300 transition duration-150 hover:text-emerald-400">About</a>
-              <a href="#" class="text-gray-300 transition duration-150 hover:text-emerald-400">Predict</a>
-              <a href="#" class="text-gray-300 transition duration-150 hover:text-emerald-400">Features</a>
-              <a href="#" class="text-gray-300 transition duration-150 hover:text-emerald-400">Documentation</a>
+<body>
+    <div class="bg-white pb-6 sm:pb-8 lg:pb-12">
+        <div class="mx-auto max-w-screen-2xl px-4 md:px-8">
+          <header class="mb-4 flex items-center justify-between py-4 md:py-8">
+            <!-- logo - start -->
+            <a href="/" class="inline-flex items-center gap-2.5 text-2xl font-bold text-black md:text-3xl" aria-label="logo">
+              <svg width="95" height="94" viewBox="0 0 95 94" class="h-auto w-6 text-green-500" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M96 0V47L48 94H0V47L48 0H96Z" />
+              </svg>
+      
+              Prkinson Diseases Detection
+            </a>
+            <!-- logo - end -->
+      
+            <!-- nav - start -->
+            <nav class="hidden gap-12 lg:flex">
+              <a href="#" class="text-lg font-semibold text-indigo-500">Home</a>
+              <a href="#" class="text-lg font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">About</a>
+              <a href="#" class="text-lg font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">Features</a>
+              <!-- <a href="home.html" class="text-lg font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">Statistics</a> -->
             </nav>
-            <!-- copyright with updated names (aman and aaditya) -->
-            <div class="py-6 text-center text-sm text-gray-400 border-t border-gray-800 w-full">
-              © 2024 - Present Aman & Aaditya. All rights reserved. <span class="text-emerald-500/70 mx-1">|</span> Clinical decision support system
-            </div>
-          </div>
-        </footer>
+    <!-- buttons - start -->
+
+
+    <button type="button" class="inline-flex items-center gap-2 rounded-lg bg-gray-200 px-2.5 py-2 text-sm font-semibold text-gray-500 ring-indigo-300 hover:bg-gray-300 focus-visible:ring active:text-gray-700 md:text-base lg:hidden">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+      </svg>
+
+      Menu
+    </button>
+    <!-- buttons - end -->
+  </header>
+  <div class="bg-white py-6 sm:py-8 lg:py-12" >
+    <div class="mx-auto max-w-screen-2xl px-4 md:px-8">
+      <div class="mb-10 md:mb-16">
+        <h3 class="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-6 lg:text-3xl">Enter the Information Below and find if a Person has Pakinson Diseases or Not </h3>
       </div>
+      <div class="mx-auto max-w-screen-md px-4 md:px-8">
+        {% if result == 'Person Has No Pakinson Disease' %}
+    <div class="flex items-center justify-center bg-green-100 rounded">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-10 h-10 text-green-500 mr-2">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+        <p style="color: green; font-size:30px">{{result}}</p>
+    </div>
+            {% else%}
+            <div class="flex items-center justify-center bg-red-100 rounded">
+                <p style="color: red; font-size:30px">{{result}}</p>
+            
+            </div>
+            {% endif %}
+      </div><br>
+      <form class="mx-auto grid max-w-screen-md gap-4 sm:grid-cols-3" action="{{ url_for('predict_datapoint') }}" method="POST">
+        <div>
+            <label for="MDVP_Fo_Hz" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">MDVP Fo (Hz)<span>*</span></label>
+            <input name="MDVP_Fo_Hz" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="MDVP_Fhi_Hz" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">MDVP Fhi (Hz)<span>*</span></label>
+            <input name="MDVP_Fhi_Hz" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="MDVP_Flo_Hz" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">MDVP Flo (Hz)<span>*</span></label>
+            <input name="MDVP_Flo_Hz" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="MDVP_Jitter_percent" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">MDVP Jitter (%)<span>*</span></label>
+            <input name="MDVP_Jitter_percent" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="MDVP_Jitter_Abs" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">MDVP Jitter Abs<span>*</span></label>
+            <input name="MDVP_Jitter_Abs" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="MDVP_RAP" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">MDVP RAP<span>*</span></label>
+            <input name="MDVP_RAP" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        
+        <div>
+            <label for="MDVP_PPQ" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">MDVP PPQ<span>*</span></label>
+            <input name="MDVP_PPQ" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="Jitter_DDP" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">Jitter DDP<span>*</span></label>
+            <input name="Jitter_DDP" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="MDVP_Shimmer" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">MDVP Shimmer<span>*</span></label>
+            <input name="MDVP_Shimmer" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="MDVP_Shimmer_dB" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">MDVP Shimmer dB<span>*</span></label>
+            <input name="MDVP_Shimmer_dB" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="Shimmer_APQ3" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">Shimmer APQ3<span>*</span></label>
+            <input name="Shimmer_APQ3" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="Shimmer_APQ5" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">Shimmer APQ5<span>*</span></label>
+            <input name="Shimmer_APQ5" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="MDVP_APQ" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">MDVP APQ<span>*</span></label>
+            <input name="MDVP_APQ" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="Shimmer_DDA" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">Shimmer DDA<span>*</span></label>
+            <input name="Shimmer_DDA" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+    
+        <div>
+            <label for="NHR" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">NHR<span>*</span></label>
+            <input name="NHR" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="HNR" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">HNR<span>*</span></label>
+            <input name="HNR" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="RPDE" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">RPDE<span>*</span></label>
+            <input name="RPDE" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="DFA" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">DFA<span>*</span></label>
+            <input name="DFA" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="spread1" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">spread1<span>*</span></label>
+            <input name="spread1" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="spread2" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">spread2<span>*</span></label>
+            <input name="spread2" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="D2" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">D2<span>*</span></label>
+            <input name="D2" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+        <div>
+            <label for="PPE" class="mb-2 inline-block text-sm text-gray-800 sm:text-base">PPE<span>*</span></label>
+            <input name="PPE" class="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" type="text" />
+        </div>
+    
+        <br>
+    
+        <div class="flex justify-center col-span-2"> <!-- Centered between columns -->
+            <button type="submit"
+                class="inline-block rounded-lg bg-green-500 px-10 py-3 text-center text-sm font-semibold text-white outline-none ring-indigo-300 transition duration-100 hover:bg-indigo-600 focus-visible:ring active:bg-indigo-700 md:text-base" style="margin-left: 50%;">Predict</button>
+        </div>
+    </form>
+    
+      <br><br>
+
+      
+    </div>
+    <div class="bg-white pt-4 sm:pt-10 lg:pt-12">
+      <footer class="mx-auto max-w-screen-2xl px-4 md:px-8">
+        <div class="flex flex-col items-center border-t pt-6">
+          <!-- nav - start -->
+          <nav class="mb-4 flex flex-wrap justify-center gap-x-4 gap-y-2 md:justify-start md:gap-6">
+            <a href="about.html" class="text-gray-500 transition duration-100 hover:text-indigo-500 active:text-indigo-600">About</a>
+            <a href="#" class="text-gray-500 transition duration-100 hover:text-indigo-500 active:text-indigo-600">Home</a>
+            <a href="predict.html" class="text-gray-500 transition duration-100 hover:text-indigo-500 active:text-indigo-600">Predict</a>
+            <a href="features.html" class="text-gray-500 transition duration-100 hover:text-indigo-500 active:text-indigo-600">Features</a>
+            
+          </nav>
+    
+        <div class="py-8 text-center text-sm text-gray-400">© 2026 - Present Aman & Aaditya. All rights reserved.</div>
+      </footer>
     </div>
   </div>
-
-  <!-- small note: form maintains all original field names for backend compatibility -->
+  
+  
+  
+</div>
+</div>
 </body>
 </html>
